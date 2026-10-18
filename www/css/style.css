@@ -6,14 +6,24 @@
 
     HTML "command" = HTML Element.....
     JS "command" = Object
+
+    CSS = Cascading Style Sheets
+        means that code "cascades" or flows from top to bottom,
+            the top code effects the bottom 
+        Defaults can be overridden via CSS in the sequence
+        the code is written in, and how specific the code is
+        Broad:     Affect a whole <section> (and everything in it)
+        Specific:  Affect a specefic Element of HTML <-- Harder 
 */
-body {background-color:coral;font-size: 110%;text-align:center;}
-section {background-color: pink;margin-bottom:100px;display:none;}
-header {background-color: yellow;}
+body {background-color:coral;color:white;font-size: 110%;text-align:center;}
+section {background-color: brown;margin-bottom:100px;display: none;}
+header {background-color: yellow;color:brown}
 footer {background-color: red;padding: 2px}
 /* 
     In HTML id="whatever"
     In CSS #whatever
     Note: we hid all <sections> except for one; Line 11, line 19
 */
-#scWelcome {background-color: purple;display:block;}
+#scWelcome {background-color: purple; display: block;}
+#scWelcome header {color:blue;} /* <section> <header>kdjfkdfj */
+section#scWelcome footer h4 {font-size: 15%;}
