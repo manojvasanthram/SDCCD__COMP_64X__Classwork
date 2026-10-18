@@ -1,0 +1,19 @@
+/*  
+    CSS Selectors (better known as "commands" aka Rule) are made of 
+    selector {property:value;property2:value2;property99:value99;}
+    html {property:value;} <-- selector
+    element {property:value;}
+
+    HTML "command" = HTML Element.....
+    JS "command" = Object
+*/
+body {background-color:coral;font-size: 110%;text-align:center;}
+section {background-color: pink;margin-bottom:100px;display:none;}
+header {background-color: yellow;}
+footer {background-color: red;padding: 2px}
+/* 
+    In HTML id="whatever"
+    In CSS #whatever
+    Note: we hid all <sections> except for one; Line 11, line 19
+*/
+#scWelcome {background-color: purple;display:block;}

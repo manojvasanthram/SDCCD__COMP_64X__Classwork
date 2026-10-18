@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: content: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+    <script src="cordova.js"></script>
+    <script src="components/loader.js"></script>
+    <link rel="stylesheet" href="components/loader.css">
+    <!-- This makes a connection between this HTML file, and another CSS file -->
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+    </script>
+    <!-- "Extra" aspects of the project are in <head> -->
+</head>
+<body>
+    <!-- All of the visual/interactive aspects of our app,
+        must be in the <body> section. 
+        HTML: Basic structure and content
+        CSS:  Style and desgin
+        JS:   Interactivity    
+        HTML Elements are "commands" of HTML with syntax
+         <element attribute="value">Content</element>
+         <element id="abx">sfjdalksdajlksdafjklf</element>
+         Identify your <section> <h1> <element> via a unique ID
+             that you set a value of whatever you want,
+             but don't duplicate your ID on more than one Element
+         -->
+	<!-- A screen/level of our game is a <section> -->
+        <!-- <h1> is a big Heading; <h2> second-biggest heading, -->
+    <section id="scWelcome">
+        <header><h1>Welcome</h1></header>
+        <main>
+            <h2>Adventure Awaits</h2>
+            <p>
+                asdfjkljassfklajsfkljkl skla jklasdfjlk sfdal sfdajklasd jlsfd
+            </p>
+            <p>
+                <button>Load Game</button><br>
+                <button>Start Game</button>
+            </p>
+        </main>
+        <footer><h4>Copyright 2026</h4><footer>
+    </section>
+
+
+    <section id="scLoadGame">Load Game</section>
+
+    <section id="scSettings">Settings</section>
+
+    <section id="scNewGame">New Game</section>
+
+    <section id="scGameOver">Game over</section>
+</body>
+</html>
