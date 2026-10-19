@@ -152,7 +152,35 @@ function fnNavGame(scHide, scShow, ourTroop){
      2, 2, 2, 2, 2, 3, 3, 3, 3, 10
  ]; // END arrLuck
 
- let arrNamesGood = ["Anda", "Bordon", "Cazzi", "Delzorr", "Enyala"];
+ // Assignment 2.3: one possible companion name for each letter A-Z.
+ let arrNamesGood = [
+    "Anda",
+    "Bordon",
+    "Cazzi",
+    "Delzorr",
+    "Enyala",
+    "Faelan",
+    "Galen",
+    "Helena",
+    "Ivor",
+    "Jora",
+    "Kael",
+    "Liora",
+    "Merrin",
+    "Nyra",
+    "Orin",
+    "Petra",
+    "Quinn",
+    "Ronan",
+    "Selene",
+    "Theron",
+    "Ulric",
+    "Vera",
+    "Wren",
+    "Xander",
+    "Yara",
+    "Zorin"
+];
  let arrNamesBad  = ["Zech", "Yara", "Xerk", "Winza", "Vixtorr"];
  let arrEnemyTypes = ["Goblin", "Troll", "Skeleton", "Pixie", "Nixie", "Dryad", "Unicorn"];
 // ------ Lookup Tables END ------//
