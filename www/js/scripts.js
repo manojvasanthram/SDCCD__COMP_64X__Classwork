@@ -95,6 +95,7 @@ function fnResetNewGame() {
 }
 
 function fnNavMenu(scHide, scShow) {
+    document.querySelector("#pSaveStatus").textContent = "";
     if (scShow === "#scNewGame") fnResetNewGame();
     if (scShow === "#scLoadGame" || scShow === "#scWelcome") fnAppInit();
     document.querySelectorAll("body > section").forEach(section => section.style.display = "none");
@@ -247,7 +248,7 @@ function fnGameTasks(where, which, id, party) {
         case "Save Game":
             if (!party) { window.alert("No active party to save."); return; }
             fnSaveParty(party);
-            window.alert("Game saved.");
+            document.querySelector("#pSaveStatus").textContent = "Game saved.";
             break;
         case "Load Game":
             fnNavMenu("#" + where.id, "#scLoadGame");

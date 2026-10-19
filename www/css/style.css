@@ -23,3 +23,6 @@ button:disabled { cursor: default; }
 footer { background: #681e1e; padding: 0.5rem; }
 footer a { color: white; }
 section#scWelcome footer h4 { font-size: 0.85rem; }
+
+#pSaveStatus { margin: 0; padding: 0.5rem; background: #184a2b; color: white; }
+#pSaveStatus:empty { display: none; }
