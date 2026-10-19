@@ -40,10 +40,15 @@ function fnNavMenu(scHide, scShow){
     */
     document.querySelector(scHide).style.display = "none";
     document.querySelector(scShow).style.display = "block";
-    // update high score
+    // updat\e high score
     // play a sound
     // change color
 };
+
+// Code to move from level to level, taking a screen we leave, a screen we go to, and WHO is questing
+function fnNavGame(scHide, scShow, ourTroop){
+    console.log("Leaving: " + scHide, "Entering: " + scShow, "Who: " + ourTroop);
+}; // END fnNavGame()
 
 // ------ Lookup Tables START ------//
  /* A collection of all possible values, items, enemies, levels */
@@ -141,38 +146,100 @@ function fnGetRandomArr(anArray){
      let valNGEmail = document.querySelector("#pNGEmail").value;
      console.log(valNGName, valNGEmail);
 
-     // To-do: confirm no empty inputs and "real" data
+     // Conditional Statement is a way to check for possibilities and act upon them
+     // If..Else (Conditional Statement) used to check if all boxes are filled or not
+     // if(ARE BOTH BOXES FILLED IN?) {TRUE.....} else {FALSE...};
+     // Check if there is data in BOTH variables, made from those <input>
+     // Use && (meaning AND) when checking that many things are TRUE
+     // Use || (meaning OR) when checking that any things are TRUE
+    if(valNGEmail && valNGName){
+        // TRUE, all main code goes here
+        console.log("TRUE: both boxes filled");
 
-     // Generate Main Character (you)
-     let tmpMainChar = new Heroes(valNGName, 
-        fnGetRandomArr(arrStats), 
-        fnGetRandomArr(arrStats),
-        fnGetRandomArr(arrStats),
-        fnGetRandomArr(arrStats),
-        fnGetRandomArr(arrLuck),
-        fnGetRandomArr(arrWeapons),
-        fnGetRandomArr(arrClasses));
-     console.log(tmpMainChar);
+        // Generate Main Character (you)
+            let tmpMainChar = new Heroes(valNGName, 
+                fnGetRandomArr(arrStats), 
+                fnGetRandomArr(arrStats),
+                fnGetRandomArr(arrStats),
+                fnGetRandomArr(arrStats),
+                fnGetRandomArr(arrLuck),
+                fnGetRandomArr(arrWeapons),
+                fnGetRandomArr(arrClasses));
+            console.log(tmpMainChar);
 
-     // Generate 2nd player
-     let tmpChar02 = new Heroes(fnGetRandomArr(arrNamesGood), 
-        fnGetRandomArr(arrStats), 
-        fnGetRandomArr(arrStats),
-        fnGetRandomArr(arrStats),
-        fnGetRandomArr(arrStats),
-        fnGetRandomArr(arrLuck),
-        fnGetRandomArr(arrWeapons),
-        fnGetRandomArr(arrClasses));
-     console.log(tmpChar02);
+            // Generate 2nd player
+            let tmpChar02 = new Heroes(fnGetRandomArr(arrNamesGood), 
+                fnGetRandomArr(arrStats), 
+                fnGetRandomArr(arrStats),
+                fnGetRandomArr(arrStats),
+                fnGetRandomArr(arrStats),
+                fnGetRandomArr(arrLuck),
+                fnGetRandomArr(arrWeapons),
+                fnGetRandomArr(arrClasses));
+            console.log(tmpChar02);
 
-     // Generate 3rd player
-     let tmpChar03 = new Heroes(fnGetRandomArr(arrNamesGood), 
-        fnGetRandomArr(arrStats), 
-        fnGetRandomArr(arrStats),
-        fnGetRandomArr(arrStats),
-        fnGetRandomArr(arrStats),
-        fnGetRandomArr(arrLuck),
-        fnGetRandomArr(arrWeapons),
-        fnGetRandomArr(arrClasses));
-     console.log(tmpChar03);
+            // Generate 3rd player
+            let tmpChar03 = new Heroes(fnGetRandomArr(arrNamesGood), 
+                fnGetRandomArr(arrStats), 
+                fnGetRandomArr(arrStats),
+                fnGetRandomArr(arrStats),
+                fnGetRandomArr(arrStats),
+                fnGetRandomArr(arrLuck),
+                fnGetRandomArr(arrWeapons),
+                fnGetRandomArr(arrClasses));
+            console.log(tmpChar03);
+
+
+        // A characteris: constructor(hNAM, hHP, hSTR, hSPD, hMP, hLUK, hWEP, hCLS)
+        // Next code: Display results on-screen; and store the new party in the database; play the 1st level
+        // Access the placeholder <p> with the id of pNGResult and write new HTML/CSS there
+        // NOTE: We use plain Assignment Operator (=) to set the name for the FIRST TIME
+        document.querySelector("#pNGResult").innerHTML = "Name: <strong>" + tmpMainChar.hNAM;
+        // NOTE: Use the Concatenation Assignment Operator (+=) to FURTHER add data
+        document.querySelector("#pNGResult").innerHTML += "</strong><br>HP: " + tmpMainChar.hHP;
+        document.querySelector("#pNGResult").innerHTML += "<br>STR: " + tmpMainChar.hSTR;
+        document.querySelector("#pNGResult").innerHTML += "<br>SPD: " + tmpMainChar.hSPD;
+        document.querySelector("#pNGResult").innerHTML += "<br>MP: " + tmpMainChar.hMP;
+        document.querySelector("#pNGResult").innerHTML += "<br>LUK: " + tmpMainChar.hLUK;
+        document.querySelector("#pNGResult").innerHTML += "<br>WEP: " + tmpMainChar.hWEP;
+        document.querySelector("#pNGResult").innerHTML += "<br>CLS: " + tmpMainChar.hCLS;
+        // Add the 2nd player, note we continue the += and build upon wha'ts prev there
+        document.querySelector("#pNGResult").innerHTML += "<br><br>Name: <strong>" + tmpChar02.hNAM;
+        document.querySelector("#pNGResult").innerHTML += "</strong><br>HP: " + tmpChar02.hHP;
+        document.querySelector("#pNGResult").innerHTML += "<br>STR: " + tmpChar02.hSTR;
+        document.querySelector("#pNGResult").innerHTML += "<br>SPD: " + tmpChar02.hSPD;
+        document.querySelector("#pNGResult").innerHTML += "<br>MP: " + tmpChar02.hMP;
+        document.querySelector("#pNGResult").innerHTML += "<br>LUK: " + tmpChar02.hLUK;
+        document.querySelector("#pNGResult").innerHTML += "<br>WEP: " + tmpChar02.hWEP;
+        document.querySelector("#pNGResult").innerHTML += "<br>CLS: " + tmpChar02.hCLS;
+        // Character 3
+        document.querySelector("#pNGResult").innerHTML += "<br><br>Name: <strong>" + tmpChar03.hNAM;
+        document.querySelector("#pNGResult").innerHTML += "</strong><br>HP: " + tmpChar03.hHP;
+        document.querySelector("#pNGResult").innerHTML += "<br>STR: " + tmpChar03.hSTR;
+        document.querySelector("#pNGResult").innerHTML += "<br>SPD: " + tmpChar03.hSPD;
+        document.querySelector("#pNGResult").innerHTML += "<br>MP: " + tmpChar03.hMP;
+        document.querySelector("#pNGResult").innerHTML += "<br>LUK: " + tmpChar03.hLUK;
+        document.querySelector("#pNGResult").innerHTML += "<br>WEP: " + tmpChar03.hWEP;
+        document.querySelector("#pNGResult").innerHTML += "<br>CLS: " + tmpChar03.hCLS;
+
+        // After rolling one party, stop. TO-DO: add up to 3 re-rolls
+        document.querySelector("#pNGAction").style.display = "none";
+
+        // Next, add a LEVEL ONE button to proceed to the first level; add to the previous placholder
+        document.querySelector("#pNGResult").innerHTML += "<p>Excellent! Such a mighty party." + 
+            " No, go! Proceed to XYZ LEVEL!</p> " + 
+            "<p><button onclick='fnNavGame(`#scNewGame`, `#scLevelOne`, `ourTroop`);'>Go!</button></p>";
+        // NEXT: create the "super object" of the PLayer1/2/3/gold/path/weapns/secrets...
+        
+    }else{
+        // FALSE
+        console.log("FALSE: not all boxes filled");
+        // Tell the player to fill in all boxes; TO-DO: play a sound; vibrate
+        window.alert("Please enter ALL fields!");
+    }; // END If..Else checking BOTH boxes are filled
+
+
+
+
+  
  }; // END fnNewGame()
