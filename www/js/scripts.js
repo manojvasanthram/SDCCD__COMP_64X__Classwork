@@ -22,6 +22,9 @@
 // Make a simple popup
 // window.alert("Hello!");
 let hiScore = 0; // Define a HiScore Object and set its data to Zero (0) points
+// Array to keep track of all player's emails; on first run, empty;
+// Gets populated as you create players (via fnNewGame()), and load saved data (via fnLoadGame())
+let arrAllEmails = [];
 
 // ----------  Startup Messages START ---------- //
 let pWelcomeMsg = document.querySelector("#kittycat"); // Keep track of that paragraph
@@ -189,7 +192,6 @@ function fnGetRandomArr(anArray){
                 fnGetRandomArr(arrClasses));
             console.log(tmpChar03);
 
-
         // A characteris: constructor(hNAM, hHP, hSTR, hSPD, hMP, hLUK, hWEP, hCLS)
         // Next code: Display results on-screen; and store the new party in the database; play the 1st level
         // Access the placeholder <p> with the id of pNGResult and write new HTML/CSS there
@@ -228,9 +230,70 @@ function fnGetRandomArr(anArray){
         // Next, add a LEVEL ONE button to proceed to the first level; add to the previous placholder
         document.querySelector("#pNGResult").innerHTML += "<p>Excellent! Such a mighty party." + 
             " No, go! Proceed to XYZ LEVEL!</p> " + 
-            "<p><button onclick='fnNavGame(`#scNewGame`, `#scLevelOne`, `ourTroop`);'>Go!</button></p>";
-        // NEXT: create the "super object" of the PLayer1/2/3/gold/path/weapns/secrets...
-        
+            "<p><button onclick='fnNavGame(`#scNewGame`, `#scLevelOne`, `" + valNGEmail + "`);'>Go!</button></p>";
+        // NEXT: create the JSON formatted Object of the PLayer1/2/3/gold/path/weapns/secrets...
+        /* {
+             "LastName":"Campos",
+             "FirstName":"Victor",
+             "DOB":[1978, 01, 04],
+             "fave_num":32768,
+             "top-movies":{
+                            "horror":"Halloween",
+                            "comedy":"The Goonies",
+                            "Adventure":"Raider of the Lost Ark"
+                            }
+           }; // END of JSON data
+        */
+        /*
+            {
+                "player1":{"hName":"Vik", "hSPD":99},
+                "player2":{"hName":"Jan", "hSPD":22},
+                "player3":{"hName":"Rob", "hSPD":33},
+                "highest_level":[7, "Mad Mountain"]
+            }; // END
+        */
+        // Create an Object that is in JSON format, storing all our Party data
+        let tmpParty = {
+            "_id":valNGEmail,
+            "_questCompleted":false,
+            "_currentScreen":"#scLevel01",
+            "hPlayer01": tmpMainChar,
+            "hPlayer02": tmpChar02,
+            "hPlayer03": tmpChar03
+        }; // END JSON data of tmpParty
+        console.log("tmpParty JSON Object:" + tmpParty);
+        // Display the Properties (Keys) of JSON Object: Object.keys(zyx)
+        //console.log("tmpParty JSON Object:" + Object.keys(tmpParty));
+        console.log("tmpParty JSON Object ID: " + tmpParty._id);
+        console.log("tmpParty JSON Object NAME of Hero 1: " + tmpParty.hPlayer02.hNAM, tmpParty.hPlayer02.hWEP);
+        // Now store, "permanantly" this Party on the hard drive of your device
+        localStorage.setItem("lala","My amazing data!!");
+
+        // Before storing this data, check if any previously existed
+        // Take a peek at localStorage.getItem("lsAllPlayers") FIRST before proceeding
+        // localStorage saves String data by default, unless we convert back and forth
+        // JSON.stringify() > converts complex data to a simple string
+        // JSON.parse() > converts simple string to a complex data object
+        let tmpAllPlayers = JSON.parse(localStorage.getItem("lsAllPlayers"));
+        if(tmpAllPlayers){
+            // TRUE data, so add a new entry; Add [.push()] to the arrAllEmails
+            console.log("TRUE; yes prev data. Add a NEW time");
+
+            tmpAllPlayers.push(tmpParty._id);
+            localStorage.setItem("lsAllPlayers", JSON.stringify(tmpAllPlayers));     
+            localStorage.setItem(tmpParty._id, JSON.stringify(tmpParty));
+        }else{
+            // FALSE no data, so add entry for the first time; Add to the EMPTY arrAllEmails
+                console.log("FALSE; no prev data. Save for the FIRST time.");
+                // We need to store all player data, and each player data
+                // Add this player's email to the gloabl list of emails
+                arrAllEmails.push(tmpParty._id);
+                // Store all Players (all emails) - NOTE: arrAllEmails defined at top, Global Variable
+                localStorage.setItem("lsAllPlayers", JSON.stringify(arrAllEmails)); // ONE more thing...
+                // Store this Player's data, based on their email
+                localStorage.setItem(tmpParty._id, JSON.stringify(tmpParty)); // ONE MORE THING
+        }; // END If..Else checker to see if previous data or not
+
     }else{
         // FALSE
         console.log("FALSE: not all boxes filled");
@@ -238,8 +301,4 @@ function fnGetRandomArr(anArray){
         window.alert("Please enter ALL fields!");
     }; // END If..Else checking BOTH boxes are filled
 
-
-
-
-  
  }; // END fnNewGame()
