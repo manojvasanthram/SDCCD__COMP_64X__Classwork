@@ -1,4 +1,3 @@
-
 let hiScore = 0; // Define a HiScore Object and set its data to Zero (0) points
 // Array to keep track of all player's emails; on first run, empty;
 // Gets populated as you create players (via fnNewGame()), and load saved data (via fnLoadGame())
@@ -152,7 +151,6 @@ function fnNavGame(scHide, scShow, ourTroop){
      2, 2, 2, 2, 2, 3, 3, 3, 3, 10
  ]; // END arrLuck
 
- // Assignment 2.3: one possible companion name for each letter A-Z.
  let arrNamesGood = [
     "Anda",
     "Bordon",
@@ -444,20 +442,102 @@ function fnLvTavern(ourTroop){
                     console.log("Erro??", tvnBtn);
                     break;
             }; // END switch()
-            
+            // thing1 = "cat";
+            // 1 == 1 - true
+            // 1 === 1 
+            // A == 64 - true
+            // A === 64 - false
             // fnTvnBattle() 
             function fnTvnBattle(hAttrib, eAttrib){
                 console.log("Hero", tmpRndHero.hNAM, tmpRndHero[hAttrib], "vs", "Enemy", tvnEnemy01.hNAM, tvnEnemy01[eAttrib]);
-                // to be continued! 
+                // Conditional statement for a WIN, LOSE, DRAW: If Else If
+                // The hero that stepped forward will gain (or lose) the boon
+                if(tmpRndHero[hAttrib] > tvnEnemy01[eAttrib]){
+                    console.log("WIN +5"); 
+                    tmpRndHero[hAttrib] += 5;
+                    // and give the party gold; create a new Property on the spot
+                    // since no previous _gold property, we ASSIGN (=) not accumulate (+=) !!
+                    tmpCurrentPlayerData._gold = fnRandomNumRange(50, 100);
+                    // Add Next level
+                    tmpCurrentPlayerData._currentScreen = "#scForest";
+                    // save to localstorage
+                    localStorage.setItem(tmpCurrentPlayerData._id, JSON.stringify(tmpCurrentPlayerData));
+                    // deactive buttons
+                    document.querySelector("#btnTvnStr").disabled = "true";
+                    document.querySelector("#btnTvnSpd").disabled = "true";
+                    document.querySelector("#btnTvnMp").disabled  = "true";
+                    // Update results onscreen
+                    document.querySelector("#pTvnResult").innerHTML = tmpRndHero.hNAM + " stepped forward to battle the " +
+                        tvnEnemy01.hCLS + " and WON! Their stat went up 5 more and earned " + tmpCurrentPlayerData._gold + " gold. Now, continue your quest!";
+                    document.querySelector("#pTvnResult").innerHTML += "<p><button id='btnTvnNext'>Go</button></p>";
+                }else if(tmpRndHero[hAttrib] < tvnEnemy01[eAttrib]){
+                    console.log("LOSE -5");
+                    tmpRndHero[hAttrib] -= 5;
+                    tmpCurrentPlayerData._gold = fnRandomNumRange(1, 5);
+                    tmpCurrentPlayerData._currentScreen = "#scForest";
+                    localStorage.setItem(tmpCurrentPlayerData._id, JSON.stringify(tmpCurrentPlayerData));
+                    document.querySelector("#btnTvnStr").disabled = "true";
+                    document.querySelector("#btnTvnSpd").disabled = "true";
+                    document.querySelector("#btnTvnMp").disabled  = "true";
+                    document.querySelector("#pTvnResult").innerHTML = tmpRndHero.hNAM + " stepped forward to battle the " +
+                        tvnEnemy01.hCLS + " and LOST! Their stat decreased 5 and found " + tmpCurrentPlayerData._gold + " gold on the floor. Begone!";
+                    document.querySelector("#pTvnResult").innerHTML += "<p><button id='btnTvnNext'>Go</button></p>";
+                }else if(tmpRndHero[hAttrib] == tvnEnemy01[eAttrib]){
+                    console.log("DRAW +LUK");
+                    tmpRndHero[hAttrib] += tmpRndHero.hLUK;
+                    tmpCurrentPlayerData._gold = fnRandomNumRange(10, 25);
+                    tmpCurrentPlayerData._currentScreen = "#scForest";
+                    localStorage.setItem(tmpCurrentPlayerData._id, JSON.stringify(tmpCurrentPlayerData));
+                    document.querySelector("#btnTvnStr").disabled = "true";
+                    document.querySelector("#btnTvnSpd").disabled = "true";
+                    document.querySelector("#btnTvnMp").disabled  = "true";
+                    document.querySelector("#pTvnResult").innerHTML = tmpRndHero.hNAM + " stepped forward to battle the " +
+                        tvnEnemy01.hCLS + " and it was a DRAW! By luck, their stat increased and gained " + tmpCurrentPlayerData._gold + " gold Keep going!";
+                    document.querySelector("#pTvnResult").innerHTML += "<p><button id='btnTvnNext'>Go</button></p>";
+                    // Event Listener for that button, after If..Else If and fnTvnbattle
+                }else{
+                    console.log("Error??");
+                }; // END If..Else.If checker
             }; // END fnTvnBattle()
-
+            // Even Listener for each of the three btnTvnNext <button>
+            document.querySelector("#btnTvnNext").addEventListener("click", function(){fnNavGame("#scTavern", "#scForest", tmpCurrentPlayerData._id);});
+            
+            // ReLoad the data of the current party
+            // Reload the stats onscreen
+            // NOTE: Don't sue let here because we are REASSIGNING the data, not loading first time
+            tmpCurrentPlayerData = JSON.parse(localStorage.getItem(ourTroop));
+            console.log("NEW DATA", tmpCurrentPlayerData);
+            document.querySelector("#pTvnParty").innerHTML = "<table border='1'>" +
+                "<tr> <td><strong>" + tmpCurrentPlayerData.hPlayer01.hNAM +
+                "</strong><br>HP:" + tmpCurrentPlayerData.hPlayer01.hHP +
+                "<br><strong>STR:" +tmpCurrentPlayerData.hPlayer01.hSTR +
+                "<br>SPD:" +tmpCurrentPlayerData.hPlayer01.hSPD +
+                "<br>MP:" +tmpCurrentPlayerData.hPlayer01.hMP +
+                "</strong><br>LUK:" +tmpCurrentPlayerData.hPlayer01.hLUK +
+                "<br>WEP:" +tmpCurrentPlayerData.hPlayer01.hWEP +
+                "<br>CLS:" +tmpCurrentPlayerData.hPlayer01.hCLS +
+                "</td>" + 
+                
+                "<td><strong>" + tmpCurrentPlayerData.hPlayer02.hNAM +
+                "</strong><br>HP:" + tmpCurrentPlayerData.hPlayer02.hHP +
+                "<br><strong>STR:" +tmpCurrentPlayerData.hPlayer02.hSTR +
+                "<br>SPD:" +tmpCurrentPlayerData.hPlayer02.hSPD +
+                "<br>MP:" +tmpCurrentPlayerData.hPlayer02.hMP +
+                "</strong><br>LUK:" +tmpCurrentPlayerData.hPlayer02.hLUK +
+                "<br>WEP:" +tmpCurrentPlayerData.hPlayer02.hWEP +
+                "<br>CLS:" +tmpCurrentPlayerData.hPlayer02.hCLS +
+                "</td>" +  
+                
+                "<td><strong>" + tmpCurrentPlayerData.hPlayer03.hNAM +
+                "</strong><br>HP:" + tmpCurrentPlayerData.hPlayer03.hHP +
+                "<br><strong>STR:" +tmpCurrentPlayerData.hPlayer03.hSTR +
+                "<br>SPD:" +tmpCurrentPlayerData.hPlayer03.hSPD +
+                "<br>MP:" +tmpCurrentPlayerData.hPlayer03.hMP +
+                "</strong><br>LUK:" +tmpCurrentPlayerData.hPlayer03.hLUK +
+                "<br>WEP:" +tmpCurrentPlayerData.hPlayer03.hWEP +
+                "<br>CLS:" +tmpCurrentPlayerData.hPlayer03.hCLS +
+                "</td>" +  
+                
+                "</tr></table>"; // END of <table> of our party
         }; // END fnTvnAction()
-
-
-//Constructor(hNAM, hHP, hSTR, hSPD, hMP, hLUK, hWEP, hCLS){
-    //   <p id="pTvnMessage">&nbsp;</p><!-- Lore-building, hints for the level, etc -->
-    //       <p id="pTvnParty">&nbsp;</p><!-- Current party important stuff -->
-    //       <p id="pTvnEnemy">&nbsp;</p><!-- This level's challenge -->
-    //       <p id="pTvnAction">&nbsp;</p><!-- Actions to surmout that challenge -->
-    //       <p id="pTvnResult">
 }; // END fnLvTavern()
