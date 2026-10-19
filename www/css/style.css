@@ -6,3 +6,8 @@ footer {background-color: red;padding: 2px}
 #scWelcome {background-color: purple; display: block;}
 #scWelcome header {color:blue;} 
 section#scWelcome footer h4 {font-size: 15%;}
+
+/* Class for centering tables */
+.tblCenter { margin: auto; background-color: aliceblue; color: darkblue;}
+/* Add some padding inside the cells of a certain (Class-ified) table */
+.tblCenter td {padding: 0.25em;}

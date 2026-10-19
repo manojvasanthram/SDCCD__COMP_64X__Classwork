@@ -110,9 +110,9 @@ function fnNavGame(scHide, scShow, ourTroop){
             console.log("OPTION1");
             fnLvTavern(ourTroop);
             break;
-        case "#scLevel02":
+        case "#scForest":
             console.log("op1");
-            fnLvLevel02(ourTroop);
+            fnLvForest(ourTroop);
             break;
         case "#scLevel03":
             console.log("opption3");
@@ -438,7 +438,7 @@ function fnLvTavern(ourTroop){
         <tr> Table Row
         <td> Table Data (one cell)
     */
-    document.querySelector("#pTvnParty").innerHTML = "<table border='1'>" +
+    document.querySelector("#pTvnParty").innerHTML = "<table border='1' class='tblCenter'>" +
      "<tr> <td><strong>" + tmpCurrentPlayerData.hPlayer01.hNAM +
      "</strong><br>HP:" + tmpCurrentPlayerData.hPlayer01.hHP +
      "<br>STR:" +tmpCurrentPlayerData.hPlayer01.hSTR +
@@ -484,7 +484,7 @@ function fnLvTavern(ourTroop){
         ); // END tvnEnemy01
     console.log("evenmy1", tvnEnemy01);
 
-    document.querySelector("#pTvnEnemy").innerHTML = "<p style='text-align: center;'><table border='1'><tr>" +
+    document.querySelector("#pTvnEnemy").innerHTML = "<p style='text-align: center;'><table border='1' class='tblCenter'><tr>" +
         "<td><strong>" + tvnEnemy01.hNAM + 
         "</strong><br>WEP: " + tvnEnemy01.hCLS +
         "<br>CLS: " + tvnEnemy01.hWEP +
@@ -627,3 +627,90 @@ function fnLvTavern(ourTroop){
         }; // END fnTvnAction()
 }; // END fnLvTavern()
 
+// Function for the Forest level
+function fnLvForest(ourTroop){
+    console.log("At the Forest with", ourTroop);
+    
+    globalOurTroopEmail  = ourTroop;
+    console.log("globalOurTroop:", globalOurTroopEmail);
+    
+    let tmpCurrentPlayerData = JSON.parse(localStorage.getItem(ourTroop));
+    globalOurTroopData = tmpCurrentPlayerData; 
+
+    
+    // let multiarray = [ [cat, dog, bird], [black, white, stripped, yellow], [male, female] ];
+    // multiarray[0][2]; = bird
+    
+    // Lookup Table as Multidimensional Array (3 in one) <- good for grouping
+    // NAME, ITEM, ATTRIBUTE
+    let arrFrstChar = [
+        ["Adabor", "Bentrax", "Celiz", "Danitark", "Xullix", "Yizzoro", "Zana"],
+        ["Secret Book", "Holy Codex", "Lost Parchment", "Gothic Scroll"],
+        ["Power", "Wisdon", "Validation", "Insight", "Experience"]
+    ]; // END Multi-dim array of Forest character
+
+    // Genrate a Name with Item and Attribute
+    let valFrstName = arrFrstChar[0][fnRandomNumRange(0,6)]; //  .length? 
+    let valFrstItem = arrFrstChar[1][fnRandomNumRange(0,3)];
+    let valFrstAttr = arrFrstChar[2][fnRandomNumRange(0,4)];
+    console.log(valFrstName, valFrstItem, valFrstAttr);
+    
+    document.querySelector("#pFrstMessage").innerHTML  = "Welcome, " + tmpCurrentPlayerData.hPlayer01.hNAM + "! You have reached the ghostly forest. What's that ahead?.";
+    document.querySelector("#pFrstMessage").innerHTML += "<p>You meet " + valFrstName + " and their " + valFrstItem + " of " + valFrstAttr + ". </p>";
+
+    // ID Attribute may only be used ONCE per project       <section id="scgameover">
+    //              CSS: #scgamer (hashmark)
+    // Class Attribute may be used MANY times per project   <img class="myresiver" src="ca.jpg">  <img class="myresiver" src="bird.jpg>
+    //              CSS: .myresiver (dot)
+    document.querySelector("#pFrstParty").innerHTML = "<table border='1' class='tblCenter'><tr>" + 
+            "<td><strong>" + tmpCurrentPlayerData.hPlayer01.hNAM + 
+                     "</strong><br>HP: " + tmpCurrentPlayerData.hPlayer01.hHP +
+                     "<br>MP: " + tmpCurrentPlayerData.hPlayer01.hMP + 
+            "</td>" + 
+
+            "<td><strong>" + tmpCurrentPlayerData.hPlayer02.hNAM + 
+                "</strong><br>HP: " + tmpCurrentPlayerData.hPlayer02.hHP +
+                "<br>MP: " + tmpCurrentPlayerData.hPlayer02.hMP + 
+            "</td>" + 
+
+            "<td><strong>" + tmpCurrentPlayerData.hPlayer03.hNAM + 
+                "</strong><br>HP: " + tmpCurrentPlayerData.hPlayer03.hHP +
+                "<br>MP: " + tmpCurrentPlayerData.hPlayer03.hMP + 
+            "</td>" + 
+        "<tr></table>"; // END Party Table
+
+    document.querySelector("#pFrstAction").innerHTML = "<p>You will ask " + valFrstName + " to help your quest by granting you some of their " + valFrstAttr + " from their " + valFrstItem + "!</p>";
+    document.querySelector("#pFrstAction").innerHTML += "<p><button id='btnFrstMP'>Ask for MP</button> | <button id='btnFrstHP'>Ask for HP</button></p>";
+
+    document.querySelector("#btnFrstMP").addEventListener("click", function(){fnFrstAction("frstMP")});
+    document.querySelector("#btnFrstHP").addEventListener("click", function(){fnFrstAction("frstHP")});
+
+    function fnFrstAction(frstStat){
+        console.log("Stat:", frstStat);
+
+        document.querySelector("#btnFrstMP").disabled = "true";
+        document.querySelector("#btnFrstHP").disabled = "true";
+        // Get a bonus of MP/HP, get a Gold bonus, get a new ITEM, then random NEXT level
+
+        // Fully define this level's Chracter
+        let frstNPC01 = new Heroes(
+            valFrstName, 
+            fnRandomNumRange(10,20),
+            null,
+            null,
+            fnRandomNumRange(10,20),
+            fnGetRandomArr(arrLuck),
+            valFrstItem,
+            valFrstAttr
+         ); // END Forest character
+
+         // Generate a fraction so that we can X amount of a bonus
+         let tmpRndFrac = Math.random();
+         console.log(tmpRndFrac);
+         let tmpBonusHP = frstNPC01.hHP * tmpRndFrac;
+         let tmpBonusMP = frstNPC01.hMP * tmpRndFrac;
+         console.log("HP: ", Math.ceil(tmpBonusHP), "MP", Math.ceil(tmpBonusMP));
+
+         // TBC
+    }; // END fnFrstAction
+}; // END fnLvForest
