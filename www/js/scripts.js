@@ -1,3 +1,9 @@
+// Keeps track of the currently player Player Troop; GLOBAL SCOPE and is set at a level
+let globalOurTroopEmail;
+let globalOurTroopData;
+
+
+
 let hiScore = 0; // Define a HiScore Object and set its data to Zero (0) points
 // Array to keep track of all player's emails; on first run, empty;
 // Gets populated as you create players (via fnNewGame()), and load saved data (via fnLoadGame())
@@ -342,12 +348,87 @@ function fnGetRandomArr(anArray){
 //      console.log("fnLoadGame() is about to load:", gameDatazz);
 //  }; // END fnLoadGame()
 
+// General purppose function for the Footer buttons as you play the levels
+// Two parameters Where we clicked [screen], What we clicked [button]
+function fnGameTasks(tskWhere, tskWhich, tskWhoEmail, tskWhoData){
+    console.log("Pressed where: ", "#" + tskWhere.id, "Pressed which?", tskWhich);
+    console.log("Who pressed: ", tskWhoEmail);
+    console.log("Their data:", tskWhoData);
+    // Switch between possibilites
+    switch(tskWhich){
+        case "Save Game":
+            console.log("Want to Save");
+            localStorage.setItem(tskWhoEmail, JSON.stringify(tskWhoData));
+            window.alert("You saved!");
+            // todo- play a sound; vibrate
+            break;
+        case "Load Game":
+             // If..Else condition to confirm
+             if(window.confirm("Are you sure?")){
+                 console.log("DO want to switch games");
+                 // Load player data first
+                 let tmpLsAllPlayers = JSON.parse(localStorage.getItem("lsAllPlayers"));
+                 // Redraw #scLoadGame; NOTE with (=) and NOT (+=)
+                 document.querySelector("#pLGParty").innerHTML = "";
+
+                    for(let i=0; i<tmpLsAllPlayers.length; i++){
+                        // Load all the data of the specific player
+                        let tmpCurrentPlayerData = JSON.parse(localStorage.getItem(tmpLsAllPlayers[i]));
+                        document.querySelector("#pLGParty").innerHTML += "<p>" + 
+                        tmpCurrentPlayerData.hPlayer01.hNAM + " <button onclick='fnGameLoad(`" + tmpLsAllPlayers[i] + "`);'>&#9876;</button></p>";
+                    }; // END for() loop to refresh scLoadGame
+
+                 // Move to #scWelcome
+                fnNavGame("#" + tskWhere.id, "#scLoadGame", tskWhoEmail);
+             }else{
+                 console.log("Decided not to switch games");
+                 // also a pop thanks msg? a sound? 
+             }; // END If..else confirm
+            break;
+        case "Quit Game":
+             console.log("Clicked QUIT");
+             // If..Else condition to confirm
+             if(window.confirm("Are you sure?")){
+                 console.log("DO want to quit");
+                 // Load player data first
+                 let tmpLsAllPlayers = JSON.parse(localStorage.getItem("lsAllPlayers"));
+                 // Redraw #scLoadGame; NOTE with (=) and NOT (+=)
+                 document.querySelector("#pLGParty").innerHTML = "";
+
+                    for(let i=0; i<tmpLsAllPlayers.length; i++){
+                        // Load all the data of the specific player
+                        let tmpCurrentPlayerData = JSON.parse(localStorage.getItem(tmpLsAllPlayers[i]));
+                        document.querySelector("#pLGParty").innerHTML += "<p>" + 
+                        tmpCurrentPlayerData.hPlayer01.hNAM + " <button onclick='fnGameLoad(`" + tmpLsAllPlayers[i] + "`);'>&#9876;</button></p>";
+                    }; // END for() loop to refresh scLoadGame
+
+                 // Move to #scWelcome
+                fnNavGame("#" + tskWhere.id, "#scWelcome", tskWhoEmail);
+             }else{
+                 console.log("Decided not to quit");
+                 // also a pop thanks msg? a sound? 
+             }; // END If..else confirm
+            break;
+        case "Settings":
+            console.log("Want to edit Settings");
+            fnNavGame("#" + tskWhere.id, "#scSettings", tskWhoEmail);
+            // TO BE CONTINUED!
+            break;
+        default:
+            console.log(tskWhich);
+            break;
+    }; // END switch()
+}; // END fnGametasks
+
 // All the code of the Tavern Level
 function fnLvTavern(ourTroop){
     console.log("At the Tavern with", ourTroop);
+    // Also set the GLOBAL SCOPE Player Troop (at top)
+    globalOurTroopEmail  = ourTroop;
+    console.log("globalOurTroop:", globalOurTroopEmail);
     // Load the data of the current party
     let tmpCurrentPlayerData = JSON.parse(localStorage.getItem(ourTroop));
-
+    globalOurTroopData = tmpCurrentPlayerData; // Also happens when you INTERACT
     // Update the Tavern Message placeholder
     document.querySelector("#pTvnMessage").innerHTML  = "Welcome, " + tmpCurrentPlayerData.hPlayer01.hNAM + "! Grab some refreshments and chat with the various patrons of our fine establishement.";
     document.querySelector("#pTvnMessage").innerHTML += "<p>In this level, challenge an opponent to who has better STATS. </p>";
@@ -470,6 +551,8 @@ function fnLvTavern(ourTroop){
                     document.querySelector("#pTvnResult").innerHTML = tmpRndHero.hNAM + " stepped forward to battle the " +
                         tvnEnemy01.hCLS + " and WON! Their stat went up 5 more and earned " + tmpCurrentPlayerData._gold + " gold. Now, continue your quest!";
                     document.querySelector("#pTvnResult").innerHTML += "<p><button id='btnTvnNext'>Go</button></p>";
+                    // and set to globalscope
+                    globalOurTroopData = tmpCurrentPlayerData;
                 }else if(tmpRndHero[hAttrib] < tvnEnemy01[eAttrib]){
                     console.log("LOSE -5");
                     tmpRndHero[hAttrib] -= 5;
@@ -482,6 +565,7 @@ function fnLvTavern(ourTroop){
                     document.querySelector("#pTvnResult").innerHTML = tmpRndHero.hNAM + " stepped forward to battle the " +
                         tvnEnemy01.hCLS + " and LOST! Their stat decreased 5 and found " + tmpCurrentPlayerData._gold + " gold on the floor. Begone!";
                     document.querySelector("#pTvnResult").innerHTML += "<p><button id='btnTvnNext'>Go</button></p>";
+                    globalOurTroopData = tmpCurrentPlayerData;
                 }else if(tmpRndHero[hAttrib] == tvnEnemy01[eAttrib]){
                     console.log("DRAW +LUK");
                     tmpRndHero[hAttrib] += tmpRndHero.hLUK;
@@ -495,6 +579,7 @@ function fnLvTavern(ourTroop){
                         tvnEnemy01.hCLS + " and it was a DRAW! By luck, their stat increased and gained " + tmpCurrentPlayerData._gold + " gold Keep going!";
                     document.querySelector("#pTvnResult").innerHTML += "<p><button id='btnTvnNext'>Go</button></p>";
                     // Event Listener for that button, after If..Else If and fnTvnbattle
+                    globalOurTroopData = tmpCurrentPlayerData;
                 }else{
                     console.log("Error??");
                 }; // END If..Else.If checker
@@ -541,3 +626,4 @@ function fnLvTavern(ourTroop){
                 "</tr></table>"; // END of <table> of our party
         }; // END fnTvnAction()
 }; // END fnLvTavern()
+

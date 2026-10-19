@@ -84,7 +84,17 @@
       </main>
     <footer>
         <!-- Extra game actions -->
-     <h4>Save Game | Load Game | Quit Game | Settings </h4>
+     <h4>
+         <!-- The "this" objct means the thing you interacted with at that moment -->
+         <!-- A classic linked "button" that runs JS; note the differences from before -->
+         <!-- this.textContent = the TEXT of the current Element  -->
+         <!-- this.parentElement = the containing Element of the current -->
+         <!-- this.parentElement.parentElement.parentElement == a.h4.footer.section -->
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Save Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Load Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Quit Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Settings</a> 
+    </h4>
     </footer>
 </section><!-- scTavern END -->
 
