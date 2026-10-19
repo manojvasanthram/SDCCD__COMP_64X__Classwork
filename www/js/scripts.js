@@ -2,8 +2,6 @@
 let globalOurTroopEmail;
 let globalOurTroopData;
 
-
-
 let hiScore = 0; // Define a HiScore Object and set its data to Zero (0) points
 // Array to keep track of all player's emails; on first run, empty;
 // Gets populated as you create players (via fnNewGame()), and load saved data (via fnLoadGame())
@@ -631,13 +629,16 @@ function fnLvTavern(ourTroop){
 function fnLvForest(ourTroop){
     console.log("At the Forest with", ourTroop);
     
+    // Pass local variable to global variable
     globalOurTroopEmail  = ourTroop;
     console.log("globalOurTroop:", globalOurTroopEmail);
     
     let tmpCurrentPlayerData = JSON.parse(localStorage.getItem(ourTroop));
-    globalOurTroopData = tmpCurrentPlayerData; 
+    globalOurTroopData = tmpCurrentPlayerData;  // Pass local variable to global variable
 
-    
+    // Hide the pFrstEnemy (unused) Element
+    document.querySelector("#pFrstEnemy").style.display = "none";
+
     // let multiarray = [ [cat, dog, bird], [black, white, stripped, yellow], [male, female] ];
     // multiarray[0][2]; = bird
     
@@ -698,19 +699,79 @@ function fnLvForest(ourTroop){
             fnRandomNumRange(10,20),
             null,
             null,
-            fnRandomNumRange(10,20),
+            fnRandomNumRange(20,30),
             fnGetRandomArr(arrLuck),
             valFrstItem,
             valFrstAttr
          ); // END Forest character
 
-         // Generate a fraction so that we can X amount of a bonus
+         // Generate a fraction so that we can X amount of a bonus; "random" + "random"
          let tmpRndFrac = Math.random();
          console.log(tmpRndFrac);
          let tmpBonusHP = frstNPC01.hHP * tmpRndFrac;
          let tmpBonusMP = frstNPC01.hMP * tmpRndFrac;
-         console.log("HP: ", Math.ceil(tmpBonusHP), "MP", Math.ceil(tmpBonusMP));
+         // Random path Array
+         let tmpRndPath = ["#scLake", "#scMountain", "#scBridge"];
+         // Keep track of gold later; now is undefined
+         let tmpGold;
 
-         // TBC
+         // Depending on MP or HP, switch
+         switch(frstStat){
+             case "frstMP":
+                console.log("Got MP", Math.round(tmpBonusMP), frstNPC01.hMP);
+                // Add the MP to all players + LUK
+                tmpCurrentPlayerData.hPlayer01.hMP += (Math.round(tmpBonusMP) + frstNPC01.hLUK);
+                tmpCurrentPlayerData.hPlayer02.hMP += (Math.round(tmpBonusMP) + frstNPC01.hLUK);
+                tmpCurrentPlayerData.hPlayer03.hMP += (Math.round(tmpBonusMP) + frstNPC01.hLUK);
+                // Add gold
+                tmpGold = fnRandomNumRange(999, 1234)
+                tmpCurrentPlayerData._gold += tmpGold;
+                // Create an Inventory system and add a new item; NOTE (=) and not (+=)
+                tmpCurrentPlayerData._inventory = [frstNPC01.hWEP];
+                // Random path setup ABOVE, and used here
+                tmpCurrentPlayerData._currentScreen = tmpRndPath[(Math.floor(Math.random()*tmpRndPath.length))];
+                // Then save to localstoage
+                localStorage.setItem(tmpCurrentPlayerData._id, JSON.stringify(tmpCurrentPlayerData));
+                break;
+             case "frstHP":
+                console.log("Got HP", Math.round(tmpBonusHP), frstNPC01.hHP);
+                tmpCurrentPlayerData.hPlayer01.hHP += (Math.round(tmpBonusHP) + frstNPC01.hLUK);
+                tmpCurrentPlayerData.hPlayer02.hHP += (Math.round(tmpBonusHP) + frstNPC01.hLUK);
+                tmpCurrentPlayerData.hPlayer03.hHP += (Math.round(tmpBonusHP) + frstNPC01.hLUK);
+                tmpGold = fnRandomNumRange(777, 999)
+                tmpCurrentPlayerData._gold += tmpGold;
+                tmpCurrentPlayerData._inventory = [frstNPC01.hWEP];
+                tmpCurrentPlayerData._currentScreen = tmpRndPath[(Math.floor(Math.random()*tmpRndPath.length))];
+                localStorage.setItem(tmpCurrentPlayerData._id, JSON.stringify(tmpCurrentPlayerData));
+                break;
+             default:
+                console.log("Error", frstStat);
+                break;
+         }; // END switch()
+
+        // Say message
+        document.querySelector("#pFrstResult").innerHTML = "<p>Congratulations! " + frstNPC01.hNAM + 
+        " has given you their " + frstNPC01.hWEP + ", " + tmpGold + "GOLD, and enhanced your stats thus!</p>";
+        // Update Party Table NOTE: (+=) not (=)
+        document.querySelector("#pFrstResult").innerHTML += "<p><table border='1' class='tblCenter'><tr>" + 
+            "<td><strong>" + tmpCurrentPlayerData.hPlayer01.hNAM + 
+                     "</strong><br>HP: " + tmpCurrentPlayerData.hPlayer01.hHP +
+                     "<br>MP: " + tmpCurrentPlayerData.hPlayer01.hMP + 
+            "</td>" + 
+
+            "<td><strong>" + tmpCurrentPlayerData.hPlayer02.hNAM + 
+                "</strong><br>HP: " + tmpCurrentPlayerData.hPlayer02.hHP +
+                "<br>MP: " + tmpCurrentPlayerData.hPlayer02.hMP + 
+            "</td>" + 
+
+            "<td><strong>" + tmpCurrentPlayerData.hPlayer03.hNAM + 
+                "</strong><br>HP: " + tmpCurrentPlayerData.hPlayer03.hHP +
+                "<br>MP: " + tmpCurrentPlayerData.hPlayer03.hMP + 
+            "</td>" + 
+        "<tr></table></p>"; // END Party Table
+        // Add NEXT LEVEL BUTTON
+        document.querySelector("#pFrstResult").innerHTML += "<p>Now, head to The " + (tmpCurrentPlayerData._currentScreen).slice(3, (tmpCurrentPlayerData._currentScreen).length) + " and continue your quest!</p>" + 
+            "<br><button id='btnFrstNext'>Go</button>";
+        document.querySelector("#btnFrstNext").addEventListener("click", function(){fnNavGame("#scForest", tmpCurrentPlayerData._currentScreen, tmpCurrentPlayerData._id);});
     }; // END fnFrstAction
 }; // END fnLvForest
