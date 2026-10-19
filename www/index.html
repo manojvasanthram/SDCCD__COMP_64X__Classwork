@@ -47,7 +47,14 @@
     </footer>
 </section> <!-- END scLoadGame -->
 
-<section id="scSettings">Settings</section>
+<section id="scSettings">
+<header><h1>Game Guide</h1></header>
+<main><p>HP: Health · STR: Strength · SPD: Speed · MP: Magic · LUK: Luck</p>
+<p>At the Tavern, choose the attribute used by a random hero in the contest.
+In the Forest, choose one bonus for all three heroes.</p>
+<p>Progress is saved automatically after each challenge. Save Game also saves your party.
+Quit Game saves and returns to the menu. Saves belong to this browser.</p>
+<button onclick="fnNavMenu('#scSettings', settingsReturnScreen);">Back to Game</button></main></section>
 
 <section id="scNewGame">
     <header>
@@ -57,15 +64,13 @@
        <!-- <h2>MID</h2> -->
        <p id="pNGMsg">CONTENT</p>
        <p id="pNGAction">
-           <label>Name: </label><input id="pNGName"><br>
-           <label>Email: </label><input id="pNGEmail"><br>
-           <button onclick="fnNewGame();">Roll</button> <button>Reset</button>
+           <label for="pNGName">Name: </label><input id="pNGName" maxlength="50"><br>
+           <label for="pNGEmail">Email: </label><input id="pNGEmail" type="email"><br>
+           <button onclick="fnNewGame();">Roll</button> <button onclick="fnResetNewGame();">Reset</button>
        </p>
        <p id="pNGResult">&nbsp;</p>
       </main>
-    <!-- <footer>
-     <h4>BOTTOM</h4>
-    </footer> -->
+    <footer><button onclick="fnNavMenu('#scNewGame', '#scWelcome');">Main Menu</button></footer>
 </section> <!-- END scNewGame -->
 
 <section id="scGameOver">Game over</section>
@@ -73,7 +78,7 @@
 <!-- scTavern BEGIN -->
 <section id="scTavern">
     <header>
-     <h1>Drunkad's Tavern</h1>
+     <h1>Drunkard's Tavern</h1>
     </header>
       <main>
           <p id="pTvnMessage">&nbsp;</p><!-- Lore-building, hints for the level, etc -->
@@ -124,6 +129,26 @@
 
 
 
+
+<section id="scChapterComplete">
+<header><h1>Chapter Complete</h1></header>
+<main>
+<p id="pCompleteMessage"></p>
+<div id="pCompleteParty"></div>
+<p id="pCompleteRewards"></p>
+<p>Your progress is saved. Load this party to review it, or create another party from the main menu.</p>
+<button onclick="fnNavMenu('#scChapterComplete', '#scNewGame');">New Party</button>
+</main>
+    <footer>
+     <h4>
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Save Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Load Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Quit Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Settings</a> 
+    </h4>
+    </footer>
+
+</section>
 
 <!-- Moved the JS link from <head> to down here in </body> --> 
 <script src="js/scripts.js">
