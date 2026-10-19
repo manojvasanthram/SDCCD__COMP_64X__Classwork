@@ -154,6 +154,7 @@ function fnNavGame(scHide, scShow, ourTroop){
 
  let arrNamesGood = ["Anda", "Bordon", "Cazzi", "Delzorr", "Enyala"];
  let arrNamesBad  = ["Zech", "Yara", "Xerk", "Winza", "Vixtorr"];
+ let arrEnemyTypes = ["Goblin", "Troll", "Skeleton", "Pixie", "Nixie", "Dryad", "Unicorn"];
 // ------ Lookup Tables END ------//
 
 // Fuction (action/command) to pick (get) a value from any Array
@@ -174,7 +175,7 @@ function fnGetRandomArr(anArray){
  // Define the meaning of what a Main Character/Player is
  class Heroes{
      constructor(hNAM, hHP, hSTR, hSPD, hMP, hLUK, hWEP, hCLS){
-          this.hNAM = hNAM;
+         this.hNAM = hNAM;
          this.hHP = hHP;
          this.hSTR = hSTR;
          this.hSPD = hSPD;
@@ -311,15 +312,124 @@ function fnGetRandomArr(anArray){
 
 // OOPS delete this one........ we did it right with fnGameLoad()!!!
 // Function to load (existing) saved games, based on our first App Initialization (above)
- function fnLoadGame(gameData){
-     console.log("fnLoadGame() is about to load:", gameData);
- }; // END fnLoadGame()
+//  function fnLoadGame(gameDatazz){
+//      console.log("fnLoadGame() is about to load:", gameDatazz);
+//  }; // END fnLoadGame()
 
 // All the code of the Tavern Level
 function fnLvTavern(ourTroop){
     console.log("At the Tavern with", ourTroop);
-    // Owarimasu
-    // 
+    // Load the data of the current party
+    let tmpCurrentPlayerData = JSON.parse(localStorage.getItem(ourTroop));
+
+    // Update the Tavern Message placeholder
+    document.querySelector("#pTvnMessage").innerHTML  = "Welcome, " + tmpCurrentPlayerData.hPlayer01.hNAM + "! Grab some refreshments and chat with the various patrons of our fine establishement.";
+    document.querySelector("#pTvnMessage").innerHTML += "<p>In this level, challenge an opponent to who has better STATS. </p>";
+
+    /*
+        <table> create the whole thing
+        <tr> Table Row
+        <td> Table Data (one cell)
+    */
+    document.querySelector("#pTvnParty").innerHTML = "<table border='1'>" +
+     "<tr> <td><strong>" + tmpCurrentPlayerData.hPlayer01.hNAM +
+     "</strong><br>HP:" + tmpCurrentPlayerData.hPlayer01.hHP +
+     "<br>STR:" +tmpCurrentPlayerData.hPlayer01.hSTR +
+     "<br>SPD:" +tmpCurrentPlayerData.hPlayer01.hSPD +
+     "<br>MP:" +tmpCurrentPlayerData.hPlayer01.hMP +
+     "<br>LUK:" +tmpCurrentPlayerData.hPlayer01.hLUK +
+     "<br>WEP:" +tmpCurrentPlayerData.hPlayer01.hWEP +
+     "<br>CLS:" +tmpCurrentPlayerData.hPlayer01.hCLS +
+     "</td>" + 
+     
+     "<td><strong>" + tmpCurrentPlayerData.hPlayer02.hNAM +
+     "</strong><br>HP:" + tmpCurrentPlayerData.hPlayer02.hHP +
+     "<br>STR:" +tmpCurrentPlayerData.hPlayer02.hSTR +
+     "<br>SPD:" +tmpCurrentPlayerData.hPlayer02.hSPD +
+     "<br>MP:" +tmpCurrentPlayerData.hPlayer02.hMP +
+     "<br>LUK:" +tmpCurrentPlayerData.hPlayer02.hLUK +
+     "<br>WEP:" +tmpCurrentPlayerData.hPlayer02.hWEP +
+     "<br>CLS:" +tmpCurrentPlayerData.hPlayer02.hCLS +
+     "</td>" +  
+     
+    "<td><strong>" + tmpCurrentPlayerData.hPlayer03.hNAM +
+     "</strong><br>HP:" + tmpCurrentPlayerData.hPlayer03.hHP +
+     "<br>STR:" +tmpCurrentPlayerData.hPlayer03.hSTR +
+     "<br>SPD:" +tmpCurrentPlayerData.hPlayer03.hSPD +
+     "<br>MP:" +tmpCurrentPlayerData.hPlayer03.hMP +
+     "<br>LUK:" +tmpCurrentPlayerData.hPlayer03.hLUK +
+     "<br>WEP:" +tmpCurrentPlayerData.hPlayer03.hWEP +
+     "<br>CLS:" +tmpCurrentPlayerData.hPlayer03.hCLS +
+     "</td>" +  
+
+     "</tr></table>"; // END of <table> of our party
+
+     // Create a enemy
+     let tvnEnemy01 = new Heroes(
+         fnGetRandomArr(arrNamesBad),
+         fnGetRandomArr(arrStats),
+         fnGetRandomArr(arrStats),
+         fnGetRandomArr(arrStats),
+         fnGetRandomArr(arrStats),
+         fnGetRandomArr(arrLuck),
+         fnGetRandomArr(arrWeapons),
+        fnGetRandomArr(arrEnemyTypes),
+        ); // END tvnEnemy01
+    console.log("evenmy1", tvnEnemy01);
+
+    document.querySelector("#pTvnEnemy").innerHTML = "<p style='text-align: center;'><table border='1'><tr>" +
+        "<td><strong>" + tvnEnemy01.hNAM + 
+        "</strong><br>WEP: " + tvnEnemy01.hCLS +
+        "<br>CLS: " + tvnEnemy01.hWEP +
+        "</td>" +
+        "</tr></table></p>";
+
+    document.querySelector("#pTvnAction").innerHTML = "<p><button id='btnTvnStr'>STR</button> <button id='btnTvnSpd'>SPD</button> <button id='btnTvnMp'>MP</button></p>";
+
+    // Note the different way of making the buttons clickable, because it doesn't exist until now...
+    document.querySelector("#btnTvnStr").addEventListener("click", function(){ fnTvnAction("#btnTvnStr");});
+    document.querySelector("#btnTvnSpd").addEventListener("click", function(){ fnTvnAction("#btnTvnSpd");});
+    document.querySelector("#btnTvnMp").addEventListener("click", function(){  fnTvnAction("#btnTvnMp");});
+
+        // Define the function tha runs after clicking any of the 3 buttons
+        // A general purpose function deals with the three buttons
+        function fnTvnAction(tvnBtn){
+            console.log("fntvnaction is running, clicked:", tvnBtn);
+            // An array holding our three players
+            let tmpArrHeroes = [tmpCurrentPlayerData.hPlayer01, tmpCurrentPlayerData.hPlayer02, tmpCurrentPlayerData.hPlayer03];
+            // Pick a hero to step forward with that challenge
+            let tmpRndHero = tmpArrHeroes[Math.floor(Math.random() * tmpArrHeroes.length)];
+            console.log("Player ", tmpRndHero, "will battle enemy", tvnEnemy01);
+            // Conditional statement to pick between the 3 actions
+            switch(tvnBtn){
+                case "#btnTvnStr":
+                    // Hero Str vs Enemy Str
+                    fnTvnBattle("hSTR", "hSTR");
+                    break;
+                case "#btnTvnSpd":
+                    fnTvnBattle("hSPD", "hSPD");
+                    break;
+                case "#btnTvnMp":
+                    fnTvnBattle("hMP", "hMP");
+                    break;
+                default: 
+                    console.log("Erro??", tvnBtn);
+                    break;
+            }; // END switch()
+            
+            // fnTvnBattle() 
+            function fnTvnBattle(hAttrib, eAttrib){
+                console.log("Hero", tmpRndHero.hNAM, tmpRndHero[hAttrib], "vs", "Enemy", tvnEnemy01.hNAM, tvnEnemy01[eAttrib]);
+                // to be continued! 
+            }; // END fnTvnBattle()
+
+        }; // END fnTvnAction()
+
+
+//Constructor(hNAM, hHP, hSTR, hSPD, hMP, hLUK, hWEP, hCLS){
+    //   <p id="pTvnMessage">&nbsp;</p><!-- Lore-building, hints for the level, etc -->
+    //       <p id="pTvnParty">&nbsp;</p><!-- Current party important stuff -->
+    //       <p id="pTvnEnemy">&nbsp;</p><!-- This level's challenge -->
+    //       <p id="pTvnAction">&nbsp;</p><!-- Actions to surmout that challenge -->
+    //       <p id="pTvnResult">
 }; // END fnLvTavern()
-
-
