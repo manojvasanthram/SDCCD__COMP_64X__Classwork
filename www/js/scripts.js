@@ -1,32 +1,80 @@
-// This is a JavaScript Comment - Single Line
-/* This is also a JS Comment - Multi Line Comment 
-    JS is an Object Oriented Programming Language (OOP)
-    Meaning: JS works with Objects that represent
-        Names, Numbers, Groups Data, Actions, Abstract Concepts
-    car = Tires, Paint Color, MPG, Seats  <-- We define it
-    window <-- PREDEFINED
-    Syntax for Built-in Objects and Methods and Parameter
-    Object.Method("Parameter");
-    ThingToWorkWith.ThingToDo("DetailsOfTheThing");
-    Object - also known as Variable
-    Method - alsko known as Function
-    Parameter - Arguement
-    We have hundreds of built in JS to work with,
-        and we will often create our own
-    var OBJECT = DATA; // create a Variable v1.0
-    let OBJECT = DATA; // (let me create) a Variable v2.0
-    const OBJECT = DATA; // create a Constant v2.0
-    Purpose: define our own Objects to work with them
-*/
 
-// Make a simple popup
-// window.alert("Hello!");
 let hiScore = 0; // Define a HiScore Object and set its data to Zero (0) points
 // Array to keep track of all player's emails; on first run, empty;
 // Gets populated as you create players (via fnNewGame()), and load saved data (via fnLoadGame())
 let arrAllEmails = [];
 
+// ----------  App Init START ---------- //
+function fnAppInit(){
+    console.log("fnAppInit() is running");
+
+    // Set up a check to see if any saved games exist or not
+    let tmpLsAllPlayers = JSON.parse(localStorage.getItem("lsAllPlayers"));
+
+    // CONDITIONAL STATEMENT TO MAKE DECISIONS ON FIRST RUN, OR NOT
+    // Using ! means NOT (opposite) of what we're checking
+    if(!tmpLsAllPlayers){
+        console.log("TRUE we do NOT have any saved gaems");
+        // ffffff (auto-load)...........................................................<<<<<<<<<<<<<<<<<<<<<<<<<
+
+        // Display that we have no saved games yet
+        document.querySelector("#spnLGSaves").innerHTML = "0";
+
+        // Since no saved games, don't even have the option to load a game
+        // document.querySelector().style.display = "none";
+        // via the path of <secton> to <main> to <p> to <button> (1st button)
+        document.querySelector("#scWelcome main p button").disabled = "true";
+    }else{
+        console.log("FALSE we DO have at least one saved game");
+        
+        // Display nmber of saved games so far
+        document.querySelector("#spnLGSaves").innerHTML = tmpLsAllPlayers.length;
+
+        // So, reactivate the Load button. Note: how we removed the Attribute
+        document.querySelector("#scWelcome main p button").removeAttribute("disabled");
+
+        // Start populating the placeholder of saved games
+        // first blank out anything that might be there (note "" NO SPACE)
+        document.querySelector("#pLGParty").innerHTML = "";
+        // Conditional Statement to "loop" for X number of times and populate the screen
+        // for(START, END, LOOP){};  For a certain number of times, loop
+        for(let i=0; i<tmpLsAllPlayers.length; i++){
+            // console.log("Loop #", i);
+            console.log("Loop #", i, tmpLsAllPlayers[i]);
+            // Load all the data of the specific player
+            let tmpCurrentPlayerData = JSON.parse(localStorage.getItem(tmpLsAllPlayers[i]));
+            // NOTE += to ADD a line to the placeholder
+            // It's better to spell out a button, but Icons are fun!
+            document.querySelector("#pLGParty").innerHTML += "<p>" + 
+            tmpCurrentPlayerData.hPlayer01.hNAM + " <button onclick='fnGameLoad(`" + tmpLsAllPlayers[i] + "`);'>&#9876;</button></p>";
+            // Use fnGameLoad() to load the player stats/progress/gold/etc ofthis party
+            // NOTE THE VERY IMPORTANT USE OF " ' ` above
+            // to their last level 
+        }; // END for() loop
+    }; // END If..Else saved game checker
+}; // END fnAppInit()
+// And then run this Init
+window.fnAppInit();
+// ----------  App Init END  ---------- //
+
+// ---- Fucntion to Load a Game START ---- ///
+function fnGameLoad(gameData){
+    console.log("fnGameLoad() is running with", gameData);
+    // Load the data of this Party
+    let tmpCurrentPlayerData = JSON.parse(localStorage.getItem(gameData));
+    console.log("PlayerData", tmpCurrentPlayerData);
+    console.log("The current screeen", tmpCurrentPlayerData._currentScreen);
+    console.log("Player 2's Class:", tmpCurrentPlayerData.hPlayer02.hCLS);
+
+    // So send them back to their most recent level
+    fnNavGame("#scLoadGame", tmpCurrentPlayerData._currentScreen, tmpCurrentPlayerData._id);
+    // Also play a sound
+    // Check the time of day to add an easter egg
+}; // END fnGameLoad()
+// ---- Fucntion to Load a Game END ---- ///
+
 // ----------  Startup Messages START ---------- //
+// Move this to App Init Function eventually...
 let pWelcomeMsg = document.querySelector("#kittycat"); // Keep track of that paragraph
  pWelcomeMsg.innerHTML = "Hello travellers. Start a new game or return to an old one. ";
 let pLoadGameMsg = document.querySelector("#pLGMsg");
@@ -35,22 +83,41 @@ let pNewGameMsg = document.querySelector("#pNGMsg");
  pNewGameMsg.innerHTML = "Have the Sage gather your party!";
 // ----------  Startup Messages END ---------- //
 
-// This code runs after interaction (press a button onlick)
+// Navigate between menus (welcome, load, new, settings, etc)
 function fnNavMenu(scHide, scShow){
-    /*
-        scHide {display:none;}
-        scShow {display:block;}
-    */
+    /* scHide {display:none;} scShow {display:block;} */
     document.querySelector(scHide).style.display = "none";
     document.querySelector(scShow).style.display = "block";
-    // updat\e high score
-    // play a sound
-    // change color
-};
+    // update high score,     // play a sound,     // change color
+}; // END fnNavMenu()
 
 // Code to move from level to level, taking a screen we leave, a screen we go to, and WHO is questing
 function fnNavGame(scHide, scShow, ourTroop){
     console.log("Leaving: " + scHide, "Entering: " + scShow, "Who: " + ourTroop);
+
+    // Hide the screen to leave and Show the screen to enter 
+    document.querySelector(scHide).style.display = "none";
+    document.querySelector(scShow).style.display = "block";
+    // Conditional Statement to the run the code of the level
+    // switch(){};  "switch" between possibilities 
+    switch(scShow){
+        case "#scTavern":
+            console.log("OPTION1");
+            fnLvTavern(ourTroop);
+            break;
+        case "#scLevel02":
+            console.log("op1");
+            fnLvLevel02(ourTroop);
+            break;
+        case "#scLevel03":
+            console.log("opption3");
+            fnLvLevel03(ourTroop);
+            break;
+        default:
+            console.log("error?", scShow);
+            break
+    }; // END of level switcher
+    ///
 }; // END fnNavGame()
 
 // ------ Lookup Tables START ------//
@@ -66,71 +133,48 @@ function fnNavGame(scHide, scShow, ourTroop){
       "Magic Wand", 
       "Flail", 
       "Throwing Knives"
-     ];
+     ]; // END arrWeapons
+
+ // List of character classes
  let arrClasses = [
      "Knight", 
      "Healer", 
      "Bard",
      "Archer"
-    ]; // END arrClasses()
- // Luck generator: 40 out 50 times = 1 (standard luck)
-                    // 5 out of 50 times = 2 double luck
-                    // 4 out of 50 times = 3 triple luck
-                    // 1 out of 50 times = massive luck 10x
+    ]; // END arrClasses
+ 
+ // Luck generator
  let arrLuck = [
      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
      2, 2, 2, 2, 2, 3, 3, 3, 3, 10
- ];
-
- // .length Property of an Array outputs (gets) how man items in an Array
-//  console.log("Tell me how many items in this array: " + arrLuck.length);
-//  let aRandomNumber = Math.floor(Math.random() * arrLuck.length);
-//  console.log("Random num is: " + aRandomNumber);
-//  console.log("Your luck is: " + arrLuck[aRandomNumber]);
+ ]; // END arrLuck
 
  let arrNamesGood = ["Anda", "Bordon", "Cazzi", "Delzorr", "Enyala"];
  let arrNamesBad  = ["Zech", "Yara", "Xerk", "Winza", "Vixtorr"];
- 
-// window.alert("Your fifth stat is: " + arrStats[4]);
-// In the Console (F12) view the Array item
-// This code runs w/o interaction. Automatic code
-//console.log("Your 3rd stat is: " + arrStats[2]);
 // ------ Lookup Tables END ------//
 
 // Fuction (action/command) to pick (get) a value from any Array
 function fnGetRandomArr(anArray){
-    console.log("fnGetRandomArr() is running");
-    console.log("Array name: " + " + 'anArray' + "); // come back and fix later!!!!!
     console.log("Array items: " + anArray);
-
     // Generate a random number, based on the .length of the chosen array
     let aRandomNumber = Math.floor(Math.random() * anArray.length);
-    // Note, this Object has the SAME name as Line 107. That's okay because
-    // this is a Local Scope Variable (Only exists as the function runs)
-    // The one above is a Global Scope Variable (Always exists)
-
     // Then return to the rest of the app, the selected data
     return anArray[aRandomNumber];
-    // return anArray[Math.floor(Math.random() * anArray.length)];
  }; // END fnGetRandommArr()
 
- console.log(window.fnGetRandomArr(arrWeapons));
-
- // Function to pick a number from a range (inclusive)
+  // Function to pick a number from a range (inclusive)
  function fnRandomNumRange(minNum, maxNum){
      console.log("fnRandomNumRange() is running");
      return Math.floor(Math.random() * (maxNum - minNum + 1) ) + minNum ;
  }; // END fnRandomNumRange()
- console.log(window.fnRandomNumRange(1, 100));
-
+ 
  // Define the meaning of what a Main Character/Player is
  class Heroes{
      constructor(hNAM, hHP, hSTR, hSPD, hMP, hLUK, hWEP, hCLS){
-         // Assign the input values to these Properties
-         this.hNAM = hNAM;
+          this.hNAM = hNAM;
          this.hHP = hHP;
          this.hSTR = hSTR;
          this.hSPD = hSPD;
@@ -141,7 +185,7 @@ function fnGetRandomArr(anArray){
      }; // END Constructor of Properties
  }; // END of Heroes{} Class definition
 
- // Generate New Game / New Party 
+ // Generate New Game / New Party in #scNewGame
  function fnNewGame(){
      console.log("fnNewGame() is running");
      // Read the data (values) of the two <input> in the pNGAction
@@ -149,14 +193,8 @@ function fnGetRandomArr(anArray){
      let valNGEmail = document.querySelector("#pNGEmail").value;
      console.log(valNGName, valNGEmail);
 
-     // Conditional Statement is a way to check for possibilities and act upon them
      // If..Else (Conditional Statement) used to check if all boxes are filled or not
-     // if(ARE BOTH BOXES FILLED IN?) {TRUE.....} else {FALSE...};
-     // Check if there is data in BOTH variables, made from those <input>
-     // Use && (meaning AND) when checking that many things are TRUE
-     // Use || (meaning OR) when checking that any things are TRUE
     if(valNGEmail && valNGName){
-        // TRUE, all main code goes here
         console.log("TRUE: both boxes filled");
 
         // Generate Main Character (you)
@@ -168,7 +206,6 @@ function fnGetRandomArr(anArray){
                 fnGetRandomArr(arrLuck),
                 fnGetRandomArr(arrWeapons),
                 fnGetRandomArr(arrClasses));
-            console.log(tmpMainChar);
 
             // Generate 2nd player
             let tmpChar02 = new Heroes(fnGetRandomArr(arrNamesGood), 
@@ -179,7 +216,6 @@ function fnGetRandomArr(anArray){
                 fnGetRandomArr(arrLuck),
                 fnGetRandomArr(arrWeapons),
                 fnGetRandomArr(arrClasses));
-            console.log(tmpChar02);
 
             // Generate 3rd player
             let tmpChar03 = new Heroes(fnGetRandomArr(arrNamesGood), 
@@ -190,9 +226,7 @@ function fnGetRandomArr(anArray){
                 fnGetRandomArr(arrLuck),
                 fnGetRandomArr(arrWeapons),
                 fnGetRandomArr(arrClasses));
-            console.log(tmpChar03);
 
-        // A characteris: constructor(hNAM, hHP, hSTR, hSPD, hMP, hLUK, hWEP, hCLS)
         // Next code: Display results on-screen; and store the new party in the database; play the 1st level
         // Access the placeholder <p> with the id of pNGResult and write new HTML/CSS there
         // NOTE: We use plain Assignment Operator (=) to set the name for the FIRST TIME
@@ -229,45 +263,23 @@ function fnGetRandomArr(anArray){
 
         // Next, add a LEVEL ONE button to proceed to the first level; add to the previous placholder
         document.querySelector("#pNGResult").innerHTML += "<p>Excellent! Such a mighty party." + 
-            " No, go! Proceed to XYZ LEVEL!</p> " + 
-            "<p><button onclick='fnNavGame(`#scNewGame`, `#scLevelOne`, `" + valNGEmail + "`);'>Go!</button></p>";
-        // NEXT: create the JSON formatted Object of the PLayer1/2/3/gold/path/weapns/secrets...
-        /* {
-             "LastName":"Campos",
-             "FirstName":"Victor",
-             "DOB":[1978, 01, 04],
-             "fave_num":32768,
-             "top-movies":{
-                            "horror":"Halloween",
-                            "comedy":"The Goonies",
-                            "Adventure":"Raider of the Lost Ark"
-                            }
-           }; // END of JSON data
-        */
-        /*
-            {
-                "player1":{"hName":"Vik", "hSPD":99},
-                "player2":{"hName":"Jan", "hSPD":22},
-                "player3":{"hName":"Rob", "hSPD":33},
-                "highest_level":[7, "Mad Mountain"]
-            }; // END
-        */
+            " Now, go! Proceed to Drunkard's Tavern!</p> " + 
+            "<p><button onclick='fnNavGame(`#scNewGame`, `#scTavern`, `" + valNGEmail + "`);'>Go!</button></p>";
+
         // Create an Object that is in JSON format, storing all our Party data
         let tmpParty = {
-            "_id":valNGEmail,
-            "_questCompleted":false,
-            "_currentScreen":"#scLevel01",
-            "hPlayer01": tmpMainChar,
-            "hPlayer02": tmpChar02,
-            "hPlayer03": tmpChar03
+            "_id":             valNGEmail,
+            "_questCompleted": false,
+            "_currentScreen":  "#scTavern",
+            "hPlayer01":       tmpMainChar,
+            "hPlayer02":       tmpChar02,
+            "hPlayer03":       tmpChar03
         }; // END JSON data of tmpParty
-        console.log("tmpParty JSON Object:" + tmpParty);
-        // Display the Properties (Keys) of JSON Object: Object.keys(zyx)
-        //console.log("tmpParty JSON Object:" + Object.keys(tmpParty));
+        
+        // Display the Properties (Keys) of JSON Object and more: 
+        console.log("tmpParty JSON Object ID: " + Object.keys(tmpParty));
         console.log("tmpParty JSON Object ID: " + tmpParty._id);
-        console.log("tmpParty JSON Object NAME of Hero 1: " + tmpParty.hPlayer02.hNAM, tmpParty.hPlayer02.hWEP);
-        // Now store, "permanantly" this Party on the hard drive of your device
-        localStorage.setItem("lala","My amazing data!!");
+        console.log("tmpParty JSON Object NAME of Hero 1: " + tmpParty.hPlayer01.hNAM, tmpParty.hPlayer01.hWEP);
 
         // Before storing this data, check if any previously existed
         // Take a peek at localStorage.getItem("lsAllPlayers") FIRST before proceeding
@@ -276,29 +288,38 @@ function fnGetRandomArr(anArray){
         // JSON.parse() > converts simple string to a complex data object
         let tmpAllPlayers = JSON.parse(localStorage.getItem("lsAllPlayers"));
         if(tmpAllPlayers){
-            // TRUE data, so add a new entry; Add [.push()] to the arrAllEmails
             console.log("TRUE; yes prev data. Add a NEW time");
 
             tmpAllPlayers.push(tmpParty._id);
             localStorage.setItem("lsAllPlayers", JSON.stringify(tmpAllPlayers));     
             localStorage.setItem(tmpParty._id, JSON.stringify(tmpParty));
         }else{
-            // FALSE no data, so add entry for the first time; Add to the EMPTY arrAllEmails
-                console.log("FALSE; no prev data. Save for the FIRST time.");
-                // We need to store all player data, and each player data
-                // Add this player's email to the gloabl list of emails
-                arrAllEmails.push(tmpParty._id);
-                // Store all Players (all emails) - NOTE: arrAllEmails defined at top, Global Variable
-                localStorage.setItem("lsAllPlayers", JSON.stringify(arrAllEmails)); // ONE more thing...
-                // Store this Player's data, based on their email
-                localStorage.setItem(tmpParty._id, JSON.stringify(tmpParty)); // ONE MORE THING
+            console.log("FALSE; no prev data. Save for the FIRST time.");
+            // Add this player's email to the gloabl list of emails
+            arrAllEmails.push(tmpParty._id);
+            // Store all Players (all emails) - NOTE: arrAllEmails defined at top, Global Variable
+            localStorage.setItem("lsAllPlayers", JSON.stringify(arrAllEmails));
+            // Store this Player's data, based on their email
+            localStorage.setItem(tmpParty._id, JSON.stringify(tmpParty));
         }; // END If..Else checker to see if previous data or not
-
     }else{
-        // FALSE
         console.log("FALSE: not all boxes filled");
         // Tell the player to fill in all boxes; TO-DO: play a sound; vibrate
         window.alert("Please enter ALL fields!");
     }; // END If..Else checking BOTH boxes are filled
-
  }; // END fnNewGame()
+
+// OOPS delete this one........ we did it right with fnGameLoad()!!!
+// Function to load (existing) saved games, based on our first App Initialization (above)
+ function fnLoadGame(gameData){
+     console.log("fnLoadGame() is about to load:", gameData);
+ }; // END fnLoadGame()
+
+// All the code of the Tavern Level
+function fnLvTavern(ourTroop){
+    console.log("At the Tavern with", ourTroop);
+    // Owarimasu
+    // 
+}; // END fnLvTavern()
+
+

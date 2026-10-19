@@ -10,26 +10,8 @@
 <!-- This makes a connection between this HTML file, and another CSS file -->
 <link rel="stylesheet" href="css/style.css">
 <!-- Note: JS link should usually be at the end of <body> in <head> -->
-
-<!-- "Extra" aspects of the project are in <head> -->
 </head>
-
-
 <body>
-<!-- All of the visual/interactive aspects of our app,
-    must be in the <body> section. 
-    HTML: Basic structure and content
-    CSS:  Style and desgin
-    JS:   Interactivity    
-    HTML Elements are "commands" of HTML with syntax
-        <element attribute="value">Content</element>
-        <element id="abx">sfjdalksdajlksdafjklf</element>
-        Identify your <section> <h1> <element> via a unique ID
-            that you set a value of whatever you want,
-            but don't duplicate your ID on more than one Element
-        -->
-<!-- A screen/level of our game is a <section> -->
-    <!-- <h1> is a big Heading; <h2> second-biggest heading, -->
 <section id="scWelcome">
     <header><h1>Welcome</h1></header>
     <main>
@@ -43,26 +25,29 @@
         </p>
     </main>
     <footer><h4>Copyright 2026</h4></footer>
-</section>
+</section> <!-- END scWelcome -->
 
 <section id="scLoadGame">
     <header>
         <h1>Load Game</h1>
     </header>
         <main>
-         <h2>asddsafasfd</h2>
+         <!-- <h2>asddsafasfd</h2> -->
          <p id="pLGMsg">woeiuwoeinuiou siousd fiofsdu ioasdfu sdio fdsuio</p>
+         <p id="pLGParty">&nbsp;</p>
+         
+         <hr>
          <p>
              <button onclick="window.fnNavMenu('#scLoadGame', '#scWelcome');">Back</button>
          </p>
         </main>
     <footer>
-        <h4>Saved Games: xyz</h4>
+        <!-- <span> for using ID to change only one word of an on-screen element -->
+        <h4>Saved Games: <span id="spnLGSaves">xyz</span></h4>
     </footer>
-</section>
+</section> <!-- END scLoadGame -->
 
 <section id="scSettings">Settings</section>
-
 
 <section id="scNewGame">
     <header>
@@ -81,9 +66,30 @@
     <!-- <footer>
      <h4>BOTTOM</h4>
     </footer> -->
-</section>
+</section> <!-- END scNewGame -->
 
 <section id="scGameOver">Game over</section>
+
+<!-- scTavern BEGIN -->
+<section id="scTavern">
+    <header>
+     <h1>Drunkad's Tavern</h1>
+    </header>
+      <main>
+          <p id="pTvnMessage">&nbsp;</p><!-- Lore-building, hints for the level, etc -->
+          <p id="pTvnParty">&nbsp;</p><!-- Current party important stuff -->
+          <p id="pTvnEnemy">&nbsp;</p><!-- This level's challenge -->
+          <p id="pTvnAction">&nbsp;</p><!-- Actions to surmout that challenge -->
+          <p id="pTvnResult">&nbsp;</p><!-- Results go here -->
+      </main>
+    <footer>
+        <!-- Extra game actions -->
+     <h4>Save Game | Load Game | Quit Game | Settings </h4>
+    </footer>
+</section><!-- scTavern END -->
+
+
+
 
 <!-- Moved the JS link from <head> to down here in </body> --> 
 <script src="js/scripts.js">
