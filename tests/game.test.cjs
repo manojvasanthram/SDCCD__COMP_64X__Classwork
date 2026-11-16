@@ -4,7 +4,9 @@ const vm = require("node:vm");
 const fs = require("node:fs");
 const elements = new Map();
 function element(id = "") {
-    return { id: id.replace(/^#/, ""), value: "", textContent: "", innerHTML: "",
+    return { id: id.replace(/^#/, ""), value: "", textContent: "", _html: "",
+        get innerHTML() { return this._html; },
+        set innerHTML(value) { this._html = value; this.children = []; },
         style: {}, disabled: false, children: [], listeners: {},
         addEventListener(event, fn) { this.listeners[event] = fn; },
         appendChild(child) { this.children.push(child); },
@@ -25,6 +27,7 @@ const context = {
 context.window = context;
 vm.createContext(context);
 vm.runInContext(fs.readFileSync(process.argv[2] || __dirname + "/../www/js/scripts.js", "utf8"), context);
+vm.runInContext(fs.readFileSync(__dirname + "/../www/js/battles.js", "utf8"), context);
 const run = code => vm.runInContext(code, context);
 const read = id => JSON.parse(values.get(id));
 function create(name) {
@@ -75,7 +78,8 @@ for (const choice of ["HP","MP"]) {
     assert.equal(after._inventory.length, 2);
     assert.equal(after._inventory[0], "Old item");
     get("#btnFrstNext").listeners.click();
-    assert.equal(read(id)._questCompleted, true);
+    assert.equal(read(id)._questCompleted, false);
+    assert.equal(read(id)._battles[read(id)._currentScreen].status, "active");
     const snapshot = values.get(id);
     run("fnGameLoad(" + JSON.stringify(id) + ")");
     assert.equal(values.get(id), snapshot); // Loading cannot award another reward.
@@ -85,14 +89,79 @@ for (const choice of ["HP","MP"]) {
 for (const route of ["#scLake","#scMountain","#scBridge"]) {
     const data = read(first); data._currentScreen = route; values.set(first, JSON.stringify(data));
     run("fnGameLoad(" + JSON.stringify(first) + ")");
-    assert.match(get("#pCompleteMessage").textContent, new RegExp(route.slice(3)));
-    assert.equal(get("#scChapterComplete").style.display, "block");
+    assert.equal(read(first)._battles[route].status, "active");
+    assert.equal(get(route).style.display, "block");
 }
 // Fresh page load restores the same serialized party.
 const saved = values.get(first);
 const reloaded = {...context}; reloaded.window = reloaded;
 vm.createContext(reloaded);
 vm.runInContext(fs.readFileSync(process.argv[2] || __dirname + "/../www/js/scripts.js", "utf8"), reloaded);
+vm.runInContext(fs.readFileSync(__dirname + "/../www/js/battles.js", "utf8"), reloaded);
 reloaded.fnGameLoad(first);
 assert.equal(values.get(first), saved);
 console.log("PASS: independent saves, legacy saves, Tavern outcomes, HP/MP rewards, inventory, all routes, reload.");
+
+
+// Deterministic combat fixtures exercise branches without relying on random rolls.
+function fight(hp = 100, rounds = 2, heroHP = 100, strength = 10, screen = "#scLake") {
+    const id = create("Battle");
+    const party = read(id);
+    for (const key of ["hPlayer01", "hPlayer02", "hPlayer03"]) {
+        party[key].hHP = heroHP; party[key].hSTR = strength;
+    }
+    party._currentScreen = screen;
+    party._battles[screen] = {screen, boss:{hNAM:"Boss",hHP:hp,hCLS:"Dark",hWEP:"Sword"},
+        maxHP:hp,round:1,roundsLeft:rounds,used:[false,false,false],status:"active",log:[],reward:null};
+    values.set(id, JSON.stringify(party));
+    run(`fnGameLoad(${JSON.stringify(id)})`);
+    return id;
+}
+function attack(id, index, screen = "#scLake") {
+    run(`fnMiniBossAttack(${JSON.stringify(id)},${JSON.stringify(screen)},${index})`);
+}
+let battleId = fight();
+attack(battleId,0);
+assert.equal(read(battleId)._battles["#scLake"].boss.hHP,90);
+assert.equal(read(battleId).hPlayer01.hHP,90);
+const midTurn = values.get(battleId);
+attack(battleId,0);
+assert.equal(values.get(battleId),midTurn);
+run(`fnGameLoad(${JSON.stringify(battleId)})`);
+assert.equal(values.get(battleId),midTurn);
+assert.equal(get("#pLakeAction").children[0].disabled,true);
+attack(battleId,1); attack(battleId,2);
+assert.equal(read(battleId)._battles["#scLake"].round,2);
+assert.equal(get("#pLakeAction").children.every(button => !button.disabled),true);
+attack(battleId,0); attack(battleId,1); attack(battleId,2);
+assert.equal(read(battleId)._battles["#scLake"].status,"lost");
+assert.equal(read(battleId)._gold,0);
+assert.equal(get("#pLakeNext").children.length,1);
+for (const screen of ["#scLake","#scMountain","#scBridge"]) {
+    battleId = fight(10,1,100,10,screen);
+    attack(battleId,0,screen);
+    const won = read(battleId);
+    assert.equal(won._battles[screen].status,"won");
+    assert.equal(won.hPlayer01.hHP,100); // Lethal hit prevents retaliation.
+    assert.ok(won._gold > 0);
+    const snapshot = values.get(battleId);
+    attack(battleId,1,screen);
+    run(`fnGameLoad(${JSON.stringify(battleId)})`);
+    assert.equal(values.get(battleId),snapshot); // No duplicate reward on load/click.
+    run(`fnContinueBattle(${JSON.stringify(battleId)},${JSON.stringify(screen)})`);
+    assert.equal(read(battleId)._currentScreen,
+        screen === "#scLake" ? "#scMountain" : screen === "#scMountain" ? "#scBridge" : "#scChapterComplete");
+}
+battleId = fight(5,1,100,10); attack(battleId,0);
+assert.equal(read(battleId)._battles["#scLake"].boss.hHP,0); // Overkill clamps HP.
+battleId = fight(100,3,1,0);
+attack(battleId,0); attack(battleId,1); attack(battleId,2);
+assert.equal(read(battleId)._battles["#scLake"].status,"lost");
+run("fnGameTasks(document.querySelector('#scLake'), 'Quit Game', globalOurTroopEmail, globalOurTroopData)");
+assert.equal(get("#scWelcome").style.display,"block");
+const legacy = read(first); delete legacy._gameVersion; delete legacy._battles;
+legacy._questCompleted = true; legacy._currentScreen = "#scMountain";
+values.set(first,JSON.stringify(legacy)); run(`fnGameLoad(${JSON.stringify(first)})`);
+assert.equal(get("#scChapterComplete").style.display,"block");
+assert.match(get("#pCompleteMessage").textContent,/Mountain/);
+console.log("PASS: turn guards, counterattacks, rounds, defeat, all branch rewards, exact/overkill victory, mid-battle reload, quit, legacy completion.");

@@ -53,7 +53,12 @@
 <main><p>HP: Health · STR: Strength · SPD: Speed · MP: Magic · LUK: Luck</p>
 <p>At the Tavern, choose the attribute used by a random hero in the contest.
 In the Forest, choose one bonus for all three heroes.</p>
-<p>Progress is saved automatically after each challenge. Save Game also saves your party.
+<p>At the Lake, Mountain and Bridge, each hero can attack once per round.
+STR is damage to the boss. A surviving boss takes 10% of the attacking hero's remaining HP, rounded up.
+Win before your rounds run out to earn rewards. A defeat still lets you continue.</p>
+<p>Forest routes: Lake → Mountain → Bridge, Mountain → Bridge, or Bridge.
+All routes end at the Dungeon entrance; the Dungeon challenge is a later chapter.</p>
+<p>Progress is saved automatically after each challenge and every mini-boss turn. Save Game also saves your party.
 Quit Game saves and returns to the menu. Saves belong to this browser.</p>
 <button onclick="fnNavMenu('#scSettings', settingsReturnScreen);">Back to Game</button></main></section>
 
@@ -131,12 +136,79 @@ Quit Game saves and returns to the menu. Saves belong to this browser.</p>
 
 
 
+<section id="scLake">
+    <header><h1>Lake Laughlin</h1></header>
+    <main>
+        <p id="pLakeMessage"></p>
+        <div id="pLakeParty"></div>
+        <p id="pLakeEnemy"></p>
+        <p id="pLakeRound"></p>
+        <div id="pLakeAction" class="battleActions"></div>
+        <p id="pLakeResult" role="status" aria-live="polite"></p>
+        <ol id="pLakeLog" class="battleLog"></ol>
+        <div id="pLakeNext"></div>
+    </main>
+    <footer>
+     <h4>
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Save Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Load Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Quit Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Settings</a> 
+    </h4>
+    </footer>
+</section>
+
+<section id="scMountain">
+    <header><h1>Mountain Pass</h1></header>
+    <main>
+        <p id="pMountainMessage"></p>
+        <div id="pMountainParty"></div>
+        <p id="pMountainEnemy"></p>
+        <p id="pMountainRound"></p>
+        <div id="pMountainAction" class="battleActions"></div>
+        <p id="pMountainResult" role="status" aria-live="polite"></p>
+        <ol id="pMountainLog" class="battleLog"></ol>
+        <div id="pMountainNext"></div>
+    </main>
+    <footer>
+     <h4>
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Save Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Load Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Quit Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Settings</a> 
+    </h4>
+    </footer>
+</section>
+
+<section id="scBridge">
+    <header><h1>Bridge of Peril</h1></header>
+    <main>
+        <p id="pBridgeMessage"></p>
+        <div id="pBridgeParty"></div>
+        <p id="pBridgeEnemy"></p>
+        <p id="pBridgeRound"></p>
+        <div id="pBridgeAction" class="battleActions"></div>
+        <p id="pBridgeResult" role="status" aria-live="polite"></p>
+        <ol id="pBridgeLog" class="battleLog"></ol>
+        <div id="pBridgeNext"></div>
+    </main>
+    <footer>
+     <h4>
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Save Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Load Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Quit Game</a> | 
+         <a href="#" onclick="fnGameTasks(this.parentElement.parentElement.parentElement, this.textContent,  globalOurTroopEmail, globalOurTroopData); return false;">Settings</a> 
+    </h4>
+    </footer>
+</section>
+
 <section id="scChapterComplete">
 <header><h1>Chapter Complete</h1></header>
 <main>
 <p id="pCompleteMessage"></p>
 <div id="pCompleteParty"></div>
 <p id="pCompleteRewards"></p>
+<p id="pCompleteBattles"></p>
 <p>Your progress is saved. Load this party to review it, or create another party from the main menu.</p>
 <button onclick="fnNavMenu('#scChapterComplete', '#scNewGame');">New Party</button>
 </main>
@@ -154,5 +226,6 @@ Quit Game saves and returns to the menu. Saves belong to this browser.</p>
 <!-- Moved the JS link from <head> to down here in </body> --> 
 <script src="js/scripts.js">
 </script>
+<script src="js/battles.js"></script>
 </body>
 </html>

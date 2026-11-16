@@ -105,17 +105,19 @@ function fnNavMenu(scHide, scShow) {
 function fnNavGame(scHide, scShow, ourTroop) {
     const party = fnReadSave(ourTroop);
     if (!party) { window.alert("This party could not be loaded."); return; }
-    // The three destinations share a completed-chapter screen for this check-in.
-    const routes = ["#scLake", "#scMountain", "#scBridge"];
-    const target = routes.includes(scShow) ? "#scChapterComplete" : scShow;
-    if (!["#scTavern", "#scForest", "#scChapterComplete"].includes(target)) {
+    // Older COMP646 completed parties remain viewable without replaying rewards.
+    const oldCompleted = party._questCompleted && party._gameVersion !== 647;
+    const target = oldCompleted ? "#scChapterComplete" : scShow;
+    if (!["#scTavern", "#scForest", "#scLake", "#scMountain", "#scBridge",
+            "#scChapterComplete"].includes(target)) {
         window.alert("This save points to a level that is not available.");
         return;
     }
     fnNavMenu(scHide, target);
     if (target === "#scTavern") fnLvTavern(ourTroop);
     else if (target === "#scForest") fnLvForest(ourTroop);
-    else fnChapterComplete(ourTroop);
+    else if (target === "#scChapterComplete") fnChapterComplete(ourTroop);
+    else fnLvMiniBoss(ourTroop, target);
 }
 
 // ------ Lookup Tables START ------//
@@ -225,7 +227,7 @@ function fnNewGame() {
     // Email is metadata. A separate ID prevents a new party overwriting an older one.
     const id = "party-" + crypto.randomUUID();
     const party = {
-        _id: id, _email: email, _questCompleted: false,
+        _id: id, _email: email, _questCompleted: false, _gameVersion: 647, _battles: {},
         _currentScreen: "#scTavern", _gold: 0, _inventory: [],
         hPlayer01: createHero(name), hPlayer02: createHero(companion1),
         hPlayer03: createHero(companion2)
@@ -270,13 +272,17 @@ function fnChapterComplete(id) {
     globalOurTroopEmail = id;
     globalOurTroopData = party;
     fnSaveParty(party);
-    const destination = party._currentScreen.slice(3);
+    const destination = party._gameVersion === 647 ? "Dungeon entrance" : party._currentScreen.slice(3);
     document.querySelector("#pCompleteMessage").textContent =
         party.hPlayer01.hNAM + "'s party reached the " + destination +
-        " camp safely. The Tavern and Forest chapter is complete!";
+        " safely. This chapter is complete!";
     document.querySelector("#pCompleteParty").innerHTML = fnPartyTable(party);
     document.querySelector("#pCompleteRewards").textContent =
         "Gold: " + party._gold + " | Inventory: " + (party._inventory.join(", ") || "None");
+    const battles = Object.values(party._battles || {});
+    document.querySelector("#pCompleteBattles").textContent = battles.length
+        ? battles.map(battle => battle.screen.slice(3) + ": " + battle.status).join(" | ")
+        : "Completed COMP646 party. Start a new party to play the COMP647 battles.";
 }
 
 // All the code of the Tavern Level
@@ -400,7 +406,7 @@ function fnLvTavern(ourTroop){
                     console.log("WIN +5"); 
                     tmpRndHero[hAttrib] += 5;
                     // and give the party gold; create a new Property on the spot
-                    // since no previous _gold property, we ASSIGN (=) not accumulate (+=) !!
+                    // This is the first gold reward for a new party.
                     tmpCurrentPlayerData._gold = fnRandomNumRange(50, 100);
                     // Add Next level
                     tmpCurrentPlayerData._currentScreen = "#scForest";
@@ -592,7 +598,7 @@ function fnLvForest(ourTroop){
                 // Add gold
                 tmpGold = fnRandomNumRange(999, 1234)
                 tmpCurrentPlayerData._gold += tmpGold;
-                // Create an Inventory system and add a new item; NOTE (=) and not (+=)
+                // Append the new item while preserving earlier inventory.
                 tmpCurrentPlayerData._inventory.push(frstNPC01.hWEP);
                 // Random path setup ABOVE, and used here
                 tmpCurrentPlayerData._currentScreen = tmpRndPath[(Math.floor(Math.random()*tmpRndPath.length))];
@@ -641,3 +647,4 @@ function fnLvForest(ourTroop){
         document.querySelector("#btnFrstNext").addEventListener("click", function(){fnNavGame("#scForest", tmpCurrentPlayerData._currentScreen, tmpCurrentPlayerData._id);});
     }; // END fnFrstAction
 }; // END fnLvForest
+

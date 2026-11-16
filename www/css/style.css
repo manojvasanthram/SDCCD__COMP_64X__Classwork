@@ -26,3 +26,10 @@ section#scWelcome footer h4 { font-size: 0.85rem; }
 
 #pSaveStatus { margin: 0; padding: 0.5rem; background: #184a2b; color: white; }
 #pSaveStatus:empty { display: none; }
+
+
+/* COMP647 battle controls and turn history. */
+.battleActions { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center; }
+.battleLog { text-align: left; max-width: 44rem; margin: 1rem auto; }
+button:disabled { opacity: 0.55; }
+main { max-width: 56rem; margin: auto; }
